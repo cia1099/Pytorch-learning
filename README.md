@@ -1,4 +1,5 @@
 >《Pytorch 讓你愛不釋手》ISBN:9789863796671
+> https://github.com/chenyuntc/pytorch-book
 
 ### 遠端存取Jupyter Notebook
 首先，開啟IPython，設定密碼，取得加密後的密碼。[p.2-15]
