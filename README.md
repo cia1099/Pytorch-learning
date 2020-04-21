@@ -1,6 +1,12 @@
 >《Pytorch 讓你愛不釋手》ISBN:9789863796671
 > https://github.com/chenyuntc/pytorch-book
 
+<a href="#contents">
+
+* Contents
+    * [4. 常用的神經網路層](*ch4)
+    * [5. 資料處理](*ch5)
+
 ### 遠端存取Jupyter Notebook
 首先，開啟IPython，設定密碼，取得加密後的密碼。[p.2-15]
 ```
@@ -48,7 +54,10 @@ IPython的常用魔術指令[p.2-10]
 
 可以在指令或函式等後面加上"?"或"??"來檢視對應的說明文件或原始程式碼；例如%run?可以檢視它的使用說明，torch.FloatTensor??即可檢視這個類的源碼。
 
-### 4.2 常用的神經網路層
+[點我返回目錄](#contents)
+
+<h3 id='ch4'>
+### 4.2 常用的神經網路層</h3>
 可以直接在網路層類別中，調用成員weight修改參數。[p.4-7]
 ```python
 kernel = torch.ones(3,3)/-9
@@ -89,8 +98,10 @@ optimizer = optim.SGD([
     {'params': net.classifier.parameters(), 'lr': 1e-2}
 ], lr = 1e-5)
 ```
+[點我返回目錄](#contents)
 
-### 5. 資料處理
+<h3 id='ch5'>
+### 5. 資料處理</h3>
 實現自訂的資料集需要繼承Dataset，並實現兩個Python魔法方法：[p.5-2]
 * \__getitem__：傳回一筆資料或一個樣本。obj[index]相等於obj.\__getitem__(index)
 * \__len__：傳回樣本數量。len(obj)相等於obj.\__len__()
@@ -115,4 +126,6 @@ sampler = WeightedRandomSampler(weights,\
 dataloader = DataLoader(dataset, batch_size=BATCH_SIZE,sampler=sampler)
 ```
 如果指定了sampler，shuffle將不再生效，並且sampler.num_samples會覆蓋dataset的實際資料量大小。
+
+[點我返回目錄](#contents)
 
