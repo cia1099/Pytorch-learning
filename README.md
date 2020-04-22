@@ -1,11 +1,11 @@
 >《Pytorch 讓你愛不釋手》ISBN:9789863796671
 > https://github.com/chenyuntc/pytorch-book
 
-<a href="#contents">
 
+<span id="contents"><a href="#contents"> </span>
 * Contents
-    * [4. 常用的神經網路層](*ch4)
-    * [5. 資料處理](*ch5)
+    * [4. 常用的神經網路層](#ch4)
+    * [5. 資料處理](#ch5)
 
 ### 遠端存取Jupyter Notebook
 首先，開啟IPython，設定密碼，取得加密後的密碼。[p.2-15]
@@ -56,8 +56,8 @@ IPython的常用魔術指令[p.2-10]
 
 [點我返回目錄](#contents)
 
-<h3 id='ch4'>
-### 4.2 常用的神經網路層</h3>
+<span id="ch4"></span>
+### 4.2 常用的神經網路層
 可以直接在網路層類別中，調用成員weight修改參數。[p.4-7]
 ```python
 kernel = torch.ones(3,3)/-9
@@ -100,8 +100,8 @@ optimizer = optim.SGD([
 ```
 [點我返回目錄](#contents)
 
-<h3 id='ch5'>
-### 5. 資料處理</h3>
+<span id="ch5"></span>
+### 5. 資料處理
 實現自訂的資料集需要繼承Dataset，並實現兩個Python魔法方法：[p.5-2]
 * \__getitem__：傳回一筆資料或一個樣本。obj[index]相等於obj.\__getitem__(index)
 * \__len__：傳回樣本數量。len(obj)相等於obj.\__len__()
