@@ -48,6 +48,48 @@ IPython的常用魔術指令[p.2-10]
 
 可以在指令或函式等後面加上"?"或"??"來檢視對應的說明文件或原始程式碼；例如%run?可以檢視它的使用說明，torch.FloatTensor??即可檢視這個類的源碼。
 
+### 4.2 常用的神經網路層
+可以直接在網路層類別中，調用成員weight修改參數。[p.4-7]
+```python
+kernel = torch.ones(3,3)/-9
+kernel[1][1] = 1
+conv = torch.nn.Conv2d(1,1,(3,3),1, bias=False)
+conv.weight.data = kernel.view(1,1,3,3)
+# [p.4-8]
+bn = nn.BatchNorm1d(4) # 4 channel，初始化標準差為4，平均值為0
+bn.weight.data = torch.ones(4)*4
+bn.bias.data = t.zeros(4)
+```
+
+最佳化器可以設定不同的權重參數，所加成的學習率[p.4-18]
+e.g.
+```python
+class Net(nn.Module):
+    def __init__(self):
+    super(Net,self).__init__()
+    self.features = nn.Sequential(
+        nn.Conv2d(3,6,2),
+        #...
+    )
+    self.classifier = nn.Sequential(
+        nn.Linear(16*5*5, 120),
+        #...
+    )
+    def forward(self, x):
+    o = self.features(x)
+    o = o.view(o.size(0), -1)
+    o = self.classifier(o)
+    return o
+
+net = Net()
+# 為不同子網路設定不同的學習率，在finetune中經常用到
+# 如果對某個參數不指定學習率，就使用預設學習率
+optimizer = optim.SGD([
+    {'params': net.features.parameters()}, #學習率為1e-5
+    {'params': net.classifier.parameters(), 'lr': 1e-2}
+], lr = 1e-5)
+```
+
 ### 5. 資料處理
 實現自訂的資料集需要繼承Dataset，並實現兩個Python魔法方法：[p.5-2]
 * \__getitem__：傳回一筆資料或一個樣本。obj[index]相等於obj.\__getitem__(index)
@@ -73,3 +115,4 @@ sampler = WeightedRandomSampler(weights,\
 dataloader = DataLoader(dataset, batch_size=BATCH_SIZE,sampler=sampler)
 ```
 如果指定了sampler，shuffle將不再生效，並且sampler.num_samples會覆蓋dataset的實際資料量大小。
+
