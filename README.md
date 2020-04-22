@@ -47,3 +47,29 @@ IPython的常用魔術指令[p.2-10]
 |%hist|查看輸入歷史|||
 
 可以在指令或函式等後面加上"?"或"??"來檢視對應的說明文件或原始程式碼；例如%run?可以檢視它的使用說明，torch.FloatTensor??即可檢視這個類的源碼。
+
+### 5. 資料處理
+實現自訂的資料集需要繼承Dataset，並實現兩個Python魔法方法：[p.5-2]
+* \__getitem__：傳回一筆資料或一個樣本。obj[index]相等於obj.\__getitem__(index)
+* \__len__：傳回樣本數量。len(obj)相等於obj.\__len__()
+
+torchvision.transform.Compose類似nn.Sequential，可以將一連串的影像前處理類串聯起來。[p.5-4]
+
+torchvision.datasets.ImageFolder，它假設所有的育訓練集合依資料夾做分類，每個資料夾下儲存同一類別的圖片，資料夾名為類別名。[p.5-6]
+```python
+!tree --charset ASCII filePath #顯示filePath下的子資料夾樹狀檔結構
+dataset = ImageFolder('filePath')
+dataset.class_to_idx #檢查資料夾名和label的對應關係，label預設按資料夾名順序排序後存成字典
+datasets.imgs #所有圖片的路徑和對應的label
+```
+
+torch.utils.data.sampler.WeightedRandomSampler，會根據每個樣本的加權選取資料，在樣本比例不均勻的問題中，可用它進行重取樣。[p.5-13]
+```python
+weights = [2 if label == 1 else 1 for _, label in dataset]
+# replacement用於指定是否可以重複選取樣本
+# num_samples為一個Epoche共選取的樣本總數
+sampler = WeightedRandomSampler(weights,\
+ num_samples=len(dataset), replacement=True)
+dataloader = DataLoader(dataset, batch_size=BATCH_SIZE,sampler=sampler)
+```
+如果指定了sampler，shuffle將不再生效，並且sampler.num_samples會覆蓋dataset的實際資料量大小。
