@@ -6,6 +6,8 @@
 * Contents
     * [4. 常用的神經網路層](#ch4)
     * [5. 資料處理](#ch5)
+        - [5.3.2 visdom](#ch532)
+        - [5.4 GPU和持久化](#ch54)
 
 ### 遠端存取Jupyter Notebook
 首先，開啟IPython，設定密碼，取得加密後的密碼。[p.2-15]
@@ -129,3 +131,56 @@ dataloader = DataLoader(dataset, batch_size=BATCH_SIZE,sampler=sampler)
 
 [點我返回目錄](#contents)
 
+<span id="ch532"></span>
+#### 5.3.2 visdom
+透過pip可以安裝visdom，使用
+指令`python -m visdom.server`啟動服務，或是`nohup python -m visdom.server &`指令將服務放至後台執行。visdom服務是一個Web server服務，預設綁定<http://localhost:8097>，用戶與伺服器間透過tornado進行非阻塞互動。繪圖資料支援Pytorch、Numpy，但不支持python的int, float等類型。[p.5-22, 5-24]
+```python
+%%sh
+# 啟動visdom伺服器
+# nohup python -m visdom.server &
+
+#新建一個連接客戶端
+#指定 env=u'test1'，預設通訊埠為8097，host是'localhost'
+vis = visdom.Visdom(env=u'test1') #除了指定env外，還可指定host, port等參數
+
+x = torch.arange(1,30,0.01)
+y = torch.sin(x)
+vis.line(X=x,Y=y, win='sinx', opts={'title': 'y=sin(x)'})
+
+for ii in range(0,10):
+    x1 = torch.Tensor([ii])
+    y1 = x1
+    #參數update='append'來重疊圖像
+    vis = line(x1,y1,win='fig2', update='append' if ii > 0 else None)
+
+#updateTrace 新增一條線
+x1 = torch.arange(0,9,0.1)
+y1 = x**2 /9
+vis.updateTrace(x,y,win='fig2', name='this is a new Trace') 
+```
+繪圖參數：[p.5-24]
+* win：用於指定pane的名子，如果不指定，visdom將自動分配一個新的pane。如果兩次操作指定的win名子一樣，新的操作將覆蓋目前pane的內容。
+* opts：用來設定pane的顯示格式，常見的設定包含title、xlabel、ylabel、width等。
+
+[點我返回目錄](#contents)
+
+<span id="ch54"></span>
+#### 5.4 GPU和持久化
+tensor.cuda()和variable.cuda()的成員方法都會傳回一個新物件，這個新物件的資料以傳輸至GPU，而之前的tensor/variable的資料還在原來的裝置上(CPU)。module.cuda()會將所有的資料都轉移至GPU，並傳回自己。[p.5-28]
+在進行低精度的計算時，可以考慮HalfTensor，相比FloatTensor能節省一半的顯示卡記憶體，但務必注意數值溢位的情況。
+
+我們可以透過字典存儲Module和Optimizer物件。[p.5-34]
+```python
+save_model = dict(
+    optimizer = optimizer.state_dict(),
+    model = model.state_dict(),
+    info = u'模型和優化器的所有參數'
+)
+torch.save(save_model, 'model.pth')
+
+pretrain = torch.load('./model.pth')
+pretrain.keys()
+```
+
+[點我返回目錄](#contents)
